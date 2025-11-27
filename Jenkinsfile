@@ -2,50 +2,47 @@ pipeline {
   agent any
 
   environment {
-    DOCKER_BACKEND = "mallikarjuningali/crud-dd-backend"
-    DOCKER_FRONTEND = "mallikarjuningali/crud-dd-frontend"
-    IMAGE_TAG = "${env.BUILD_ID}"  // unique tag per build
+    BACKEND = "mallikarjuningali/crud-dd-backend"
+    FRONTEND = "mallikarjuningali/crud-dd-frontend"
+    IMAGE_TAG = "${env.BUILD_ID}"
   }
 
   stages {
     stage('Checkout') {
-      steps {
-        checkout scm
-      }
+      steps { checkout scm }
     }
 
     stage('Build Backend Image') {
       steps {
-        sh "docker build -t ${DOCKER_BACKEND}:latest -f Dockerfile.backend ."
-        sh "docker build -t ${DOCKER_BACKEND}:${IMAGE_TAG} -f Dockerfile.backend ."
+        sh "docker build -t ${BACKEND}:latest -f Dockerfile.backend ."
+        sh "docker build -t ${BACKEND}:${IMAGE_TAG} -f Dockerfile.backend ."
       }
     }
 
     stage('Build Frontend Image') {
       steps {
-        sh "docker build -t ${DOCKER_FRONTEND}:latest -f Dockerfile.frontend ."
-        sh "docker build -t ${DOCKER_FRONTEND}:${IMAGE_TAG} -f Dockerfile.frontend ."
+        sh "docker build -t ${FRONTEND}:latest -f Dockerfile.frontend ."
+        sh "docker build -t ${FRONTEND}:${IMAGE_TAG} -f Dockerfile.frontend ."
       }
     }
 
-    stage('Push Images to Docker Hub') {
+    stage('Push to Docker Hub') {
       steps {
         withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DH_USER', passwordVariable: 'DH_PASS')]) {
           sh '''
             echo "$DH_PASS" | docker login -u "$DH_USER" --password-stdin
-            docker push ${DOCKER_BACKEND}:latest
-            docker push ${DOCKER_BACKEND}:${IMAGE_TAG}
-            docker push ${DOCKER_FRONTEND}:latest
-            docker push ${DOCKER_FRONTEND}:${IMAGE_TAG}
+            docker push ${BACKEND}:latest
+            docker push ${BACKEND}:${IMAGE_TAG}
+            docker push ${FRONTEND}:latest
+            docker push ${FRONTEND}:${IMAGE_TAG}
             docker logout
           '''
         }
       }
     }
 
-    stage('Deploy to VM (SSH)') {
+    stage('Deploy to VM') {
       steps {
-        // Use SSH Agent plugin with credential id 'vm-ssh-key'
         sshagent (credentials: ['vm-ssh-key']) {
           sh '''
             VM_USER="ubuntu"
@@ -56,8 +53,6 @@ pipeline {
             ssh -o StrictHostKeyChecking=no -p $SSH_PORT $VM_USER@$VM_HOST << 'EOF'
               mkdir -p $REMOTE_DIR
               cd $REMOTE_DIR
-              # make sure docker compose file and nginx folder are present on VM in REMOTE_DIR
-              # Pull latest images and restart services:
               docker compose pull
               docker compose up -d --remove-orphans
             EOF
@@ -65,14 +60,10 @@ pipeline {
         }
       }
     }
-  } // stages
+  }
 
   post {
-    success {
-      echo "Pipeline finished successfully."
-    }
-    failure {
-      echo "Pipeline failed."
-    }
+    success { echo "Pipeline succeeded." }
+    failure { echo "Pipeline failed." }
   }
 }
