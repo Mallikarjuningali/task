@@ -1,13 +1,18 @@
+# Dockerfile.backend
 FROM node:18-alpine
 
 WORKDIR /usr/src/app
 
+# copy package json then install to leverage layer cache
 COPY backend/package*.json ./
-RUN npm install --omit=dev
+
+# Use npm ci if package-lock.json exists; otherwise fallback to npm install
+RUN if [ -f package-lock.json ]; then npm ci --omit=dev; else npm install --omit=dev; fi
 
 COPY backend/ ./
 
+ENV NODE_ENV=production
 ENV PORT=8080
-EXPOSE 8080
 
+EXPOSE 8080
 CMD ["node", "server.js"]
