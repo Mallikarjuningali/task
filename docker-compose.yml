@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+  mongo:
+    image: mongo:6.0
+    container_name: crud_mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongoadmin
+      MONGO_INITDB_ROOT_PASSWORD: examplepassword
+    ports:
+      - "27017:27017"   # Optional: expose for debugging
+    volumes:
+      - mongo-data:/data/db
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    image: mallikarjuningali/crud-dd-backend:latest
+    container_name: crud_backend
+    depends_on:
+      - mongo
+    environment:
+      PORT: 8080
+      MONGO_URI: mongodb://mongoadmin:examplepassword@mongo:27017/cruddb?authSource=admin
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    image: mallikarjuningali/crud-dd-frontend:latest
+    container_name: crud_frontend
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: crud_nginx
+    depends_on:
+      - backend
+      - frontend
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    restart: unless-stopped
+
+volumes:
+  mongo-data:
