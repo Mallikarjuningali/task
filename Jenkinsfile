@@ -60,7 +60,7 @@ pipeline {
                         VM_USER=ubuntu
                         VM_HOST=13.200.246.8
                         SSH_PORT=22
-                        REMOTE_DIR=/var/lib/jenkins/crud-deploy
+                        REMOTE_DIR=/home/ubuntu/crud-deploy
 
                         # Create directory on VM
                         ssh -o StrictHostKeyChecking=no -p $SSH_PORT $VM_USER@$VM_HOST "
@@ -89,3 +89,4 @@ pipeline {
         }
     }
 }
+
