@@ -46,7 +46,7 @@ pipeline {
         sshagent (credentials: ['vm-ssh-key']) {
           sh '''
             VM_USER="ubuntu"
-            VM_HOST="YOUR_VM_PUBLIC_IP"
+            VM_HOST="13.200.246.8"
             SSH_PORT=22
             REMOTE_DIR=~/crud-deploy
 
@@ -67,3 +67,4 @@ pipeline {
     failure { echo "Pipeline failed." }
   }
 }
+
