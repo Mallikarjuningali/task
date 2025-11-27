@@ -42,29 +42,33 @@ pipeline {
     }
 
     stage('Deploy to VM') {
-      steps {
-        sshagent (credentials: ['vm-ssh-key']) {
-          sh '''
-            VM_USER="ubuntu"
-            VM_HOST="13.200.246.8"
-            SSH_PORT=22
-            REMOTE_DIR=~/crud-deploy
+    steps {
+        sshagent(['vm-ssh-key']) {
+            sh '''
+                VM_USER=ubuntu
+                VM_HOST=13.200.246.8
+                SSH_PORT=22
+                REMOTE_DIR=/var/lib/jenkins/crud-deploy
 
-            ssh -o StrictHostKeyChecking=no -p $SSH_PORT $VM_USER@$VM_HOST << 'EOF'
-              mkdir -p $REMOTE_DIR
-              cd $REMOTE_DIR
-              docker compose pull
-              docker compose up -d --remove-orphans
-            EOF
-          '''
+                ssh -o StrictHostKeyChecking=no -p $SSH_PORT $VM_USER@$VM_HOST "
+                    mkdir -p $REMOTE_DIR
+                "
+
+                scp -o StrictHostKeyChecking=no -P $SSH_PORT docker-compose.yml $VM_USER@$VM_HOST:$REMOTE_DIR/
+
+                ssh -o StrictHostKeyChecking=no -p $SSH_PORT $VM_USER@$VM_HOST "
+                    cd $REMOTE_DIR && docker compose pull && docker compose up -d
+                "
+            '''
         }
-      }
     }
-  }
+}
+
 
   post {
     success { echo "Pipeline succeeded." }
     failure { echo "Pipeline failed." }
   }
 }
+
 
