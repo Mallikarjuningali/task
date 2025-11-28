@@ -6,10 +6,9 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Read correct environment variable
-const MONGO_URL = process.env.MONGO_URI;
+// Read MongoDB URI
+const MONGO_URL = process.env.MONGO_URI || "mongodb://localhost:27017/cruddb";
 
-// Debug print
 console.log("Using MONGO_URL:", MONGO_URL);
 
 mongoose.set("strictQuery", false);
@@ -32,11 +31,10 @@ app.get("/", (req, res) => {
   res.json({ message: "Backend is running." });
 });
 
-// Import routes
+// Load routes
 require("./app/routes/tutorial.routes")(app);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
-
