@@ -3,23 +3,21 @@ const mongoose = require("mongoose");
 
 const app = express();
 
-// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Read MONGO_URL from environment variable
-const MONGO_URL = process.env.MONGO_URL;
+// Read correct environment variable
+const MONGO_URL = process.env.MONGO_URI;
 
-// Debug log (you will see this in docker logs)
+// Debug print
 console.log("Using MONGO_URL:", MONGO_URL);
 
-// Connect to MongoDB
 mongoose.set("strictQuery", false);
 
 mongoose
   .connect(MONGO_URL, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
   })
   .then(() => {
     console.log("✅ Connected to MongoDB");
@@ -29,15 +27,14 @@ mongoose
     process.exit(1);
   });
 
-// Simple route
+// Test route
 app.get("/", (req, res) => {
-  res.json({ message: "Welcome to CRUD API." });
+  res.json({ message: "Backend is running." });
 });
 
-// Load routes
+// Import routes
 require("./app/routes/tutorial.routes")(app);
 
-// Start backend server
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
