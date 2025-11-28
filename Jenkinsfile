@@ -58,7 +58,7 @@ pipeline {
                 sshagent(['vm-ssh-key']) {
                     sh '''
                         VM_USER=ubuntu
-                        VM_HOST=65.0.71.12
+                        VM_HOST=3.110.121.57
                         SSH_PORT=22
                         REMOTE_DIR=/home/ubuntu/crud-deploy
 
@@ -89,5 +89,6 @@ pipeline {
         }
     }
 }
+
 
 
