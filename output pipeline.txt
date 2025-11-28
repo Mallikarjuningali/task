@@ -1,0 +1,448 @@
+Started by user mallu
+Obtained Jenkinsfile from git https://github.com/Mallikarjuningali/task.git
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/lib/jenkins/workspace/crud-deploy-pipeline
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+No credentials specified
+ > git rev-parse --resolve-git-dir /var/lib/jenkins/workspace/crud-deploy-pipeline/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/Mallikarjuningali/task.git # timeout=10
+Fetching upstream changes from https://github.com/Mallikarjuningali/task.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.43.0'
+ > git fetch --tags --force --progress -- https://github.com/Mallikarjuningali/task.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision f36961ccd6ac86c051a74d2375c2d17b00d7e150 (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f f36961ccd6ac86c051a74d2375c2d17b00d7e150 # timeout=10
+Commit message: "Update API proxy to use crud_backend"
+ > git rev-list --no-walk 8f9b974d88c4aaad0f19b7dae3ac89613441620e # timeout=10
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+No credentials specified
+ > git rev-parse --resolve-git-dir /var/lib/jenkins/workspace/crud-deploy-pipeline/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/Mallikarjuningali/task.git # timeout=10
+Fetching upstream changes from https://github.com/Mallikarjuningali/task.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.43.0'
+ > git fetch --tags --force --progress -- https://github.com/Mallikarjuningali/task.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision f36961ccd6ac86c051a74d2375c2d17b00d7e150 (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f f36961ccd6ac86c051a74d2375c2d17b00d7e150 # timeout=10
+Commit message: "Update API proxy to use crud_backend"
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build Backend Image)
+[Pipeline] sh
++ docker build -t mallikarjuningali/crud-dd-backend:latest -f Dockerfile.backend .
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon   56.8MB
+Step 1/9 : FROM node:18-alpine
+ ---> ee77c6cd7c18
+Step 2/9 : WORKDIR /usr/src/app
+ ---> Using cache
+ ---> f1b2c385a69b
+Step 3/9 : COPY backend/package*.json ./
+ ---> Using cache
+ ---> 51c161f751a4
+Step 4/9 : RUN if [ -f package-lock.json ]; then npm ci --omit=dev; else npm install --omit=dev; fi
+ ---> Using cache
+ ---> aaf27813124a
+Step 5/9 : COPY backend/ /usr/src/app/
+ ---> Using cache
+ ---> f987fac28614
+Step 6/9 : ENV NODE_ENV=production
+ ---> Using cache
+ ---> 8b33664145b5
+Step 7/9 : ENV PORT=8080
+ ---> Using cache
+ ---> 32c93b595e42
+Step 8/9 : EXPOSE 8080
+ ---> Using cache
+ ---> 74400a4a267a
+Step 9/9 : CMD ["node", "server.js"]
+ ---> Using cache
+ ---> 424dd5e0bd0c
+Successfully built 424dd5e0bd0c
+Successfully tagged mallikarjuningali/crud-dd-backend:latest
+[Pipeline] sh
++ docker build -t mallikarjuningali/crud-dd-backend:33 -f Dockerfile.backend .
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon   56.8MB
+Step 1/9 : FROM node:18-alpine
+ ---> ee77c6cd7c18
+Step 2/9 : WORKDIR /usr/src/app
+ ---> Using cache
+ ---> f1b2c385a69b
+Step 3/9 : COPY backend/package*.json ./
+ ---> Using cache
+ ---> 51c161f751a4
+Step 4/9 : RUN if [ -f package-lock.json ]; then npm ci --omit=dev; else npm install --omit=dev; fi
+ ---> Using cache
+ ---> aaf27813124a
+Step 5/9 : COPY backend/ /usr/src/app/
+ ---> Using cache
+ ---> f987fac28614
+Step 6/9 : ENV NODE_ENV=production
+ ---> Using cache
+ ---> 8b33664145b5
+Step 7/9 : ENV PORT=8080
+ ---> Using cache
+ ---> 32c93b595e42
+Step 8/9 : EXPOSE 8080
+ ---> Using cache
+ ---> 74400a4a267a
+Step 9/9 : CMD ["node", "server.js"]
+ ---> Using cache
+ ---> 424dd5e0bd0c
+Successfully built 424dd5e0bd0c
+Successfully tagged mallikarjuningali/crud-dd-backend:33
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build Frontend Image)
+[Pipeline] sh
++ docker build -t mallikarjuningali/crud-dd-frontend:latest -f Dockerfile.frontend .
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon   56.8MB
+Step 1/12 : FROM node:16-alpine AS build
+ ---> 2573171e0124
+Step 2/12 : WORKDIR /usr/src/app
+ ---> Using cache
+ ---> e2fa4edfb7f9
+Step 3/12 : COPY frontend/package*.json ./
+ ---> Using cache
+ ---> 9a69acef4017
+Step 4/12 : RUN npm install
+ ---> Using cache
+ ---> 9f3d1a919e39
+Step 5/12 : COPY frontend/ ./
+ ---> b0559ef00db4
+Step 6/12 : RUN npm run build -- --output-path=dist
+ ---> Running in 5b8d9b65a51c
+
+> angular-15-crud@0.0.0 build
+> ng build --output-path=dist
+
+[91m- Generating browser application bundles (phase: setup)...
+[0m[91m✔ Browser application bundle generation complete.
+[0m[91m✔ Browser application bundle generation complete.
+[0m[91m- Copying assets...
+[0m[91m✔ Copying assets complete.
+- Generating index html...
+[0m[91m- Generating index html...
+[0m[91m1 rules skipped due to selector errors:
+  .custom-file-input:lang(en)~.custom-file-label -> unmatched pseudo-class :lang
+[0m[91m✔ Index html generation complete.
+[0m
+Initial Chunk Files           | Names         |  Raw Size | Estimated Transfer Size
+main.3cfba7d4076d5c96.js      | main          | 251.07 kB |                64.89 kB
+styles.a690c6aa558c1ef2.css   | styles        | 142.62 kB |                16.67 kB
+polyfills.a93aa38d38a04e41.js | polyfills     |  33.10 kB |                10.70 kB
+runtime.76aa1c0226a6a824.js   | runtime       | 908 bytes |               513 bytes
+
+| Initial Total | 427.67 kB |                92.75 kB
+
+Build at: 2025-11-28T12:10:29.105Z - Hash: c2f99e65528a34d2 - Time: 40117ms
+ ---> Removed intermediate container 5b8d9b65a51c
+ ---> 63d6d1a6e03f
+Step 7/12 : FROM nginx:stable-alpine
+ ---> c318e336065b
+Step 8/12 : RUN rm -f /etc/nginx/conf.d/default.conf
+ ---> Using cache
+ ---> 91cfd32d5c21
+Step 9/12 : COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
+ ---> 5a9852427dee
+Step 10/12 : COPY --from=build /usr/src/app/dist/ /usr/share/nginx/html/
+ ---> 8f7eddb58407
+Step 11/12 : EXPOSE 80
+ ---> Running in e0dc076a065c
+ ---> Removed intermediate container e0dc076a065c
+ ---> 4364aa3f0a0c
+Step 12/12 : CMD ["nginx", "-g", "daemon off;"]
+ ---> Running in ec1edab2d9ac
+ ---> Removed intermediate container ec1edab2d9ac
+ ---> ee1b27a5a115
+Successfully built ee1b27a5a115
+Successfully tagged mallikarjuningali/crud-dd-frontend:latest
+[Pipeline] sh
++ docker build -t mallikarjuningali/crud-dd-frontend:33 -f Dockerfile.frontend .
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon   56.8MB
+Step 1/12 : FROM node:16-alpine AS build
+ ---> 2573171e0124
+Step 2/12 : WORKDIR /usr/src/app
+ ---> Using cache
+ ---> e2fa4edfb7f9
+Step 3/12 : COPY frontend/package*.json ./
+ ---> Using cache
+ ---> 9a69acef4017
+Step 4/12 : RUN npm install
+ ---> Using cache
+ ---> 9f3d1a919e39
+Step 5/12 : COPY frontend/ ./
+ ---> Using cache
+ ---> b0559ef00db4
+Step 6/12 : RUN npm run build -- --output-path=dist
+ ---> Using cache
+ ---> 63d6d1a6e03f
+Step 7/12 : FROM nginx:stable-alpine
+ ---> c318e336065b
+Step 8/12 : RUN rm -f /etc/nginx/conf.d/default.conf
+ ---> Using cache
+ ---> 91cfd32d5c21
+Step 9/12 : COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
+ ---> Using cache
+ ---> 5a9852427dee
+Step 10/12 : COPY --from=build /usr/src/app/dist/ /usr/share/nginx/html/
+ ---> Using cache
+ ---> 8f7eddb58407
+Step 11/12 : EXPOSE 80
+ ---> Using cache
+ ---> 4364aa3f0a0c
+Step 12/12 : CMD ["nginx", "-g", "daemon off;"]
+ ---> Using cache
+ ---> ee1b27a5a115
+Successfully built ee1b27a5a115
+Successfully tagged mallikarjuningali/crud-dd-frontend:33
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Push to Docker Hub)
+[Pipeline] withCredentials
+Masking supported pattern matches of $DH_PASS
+[Pipeline] {
+[Pipeline] sh
+Warning: A secret was passed to "sh" using Groovy String interpolation, which is insecure.
+		 Affected argument(s) used the following variable(s): [DH_PASS]
+		 See https://jenkins.io/redirect/groovy-string-interpolation for details.
++ docker login -u mallikarjuningali --password-stdin
++ echo ****
+
+WARNING! Your credentials are stored unencrypted in '/var/lib/jenkins/.docker/config.json'.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/go/credential-store/
+
+Login Succeeded
++ docker push mallikarjuningali/crud-dd-backend:latest
+The push refers to repository [docker.io/mallikarjuningali/crud-dd-backend]
+96d9a18f8002: Preparing
+e4a2b85378be: Preparing
+79f369df2602: Preparing
+c0edeb7bca42: Preparing
+82140d9a70a7: Preparing
+f3b40b0cdb1c: Preparing
+0b1f26057bd0: Preparing
+08000c18d16d: Preparing
+f3b40b0cdb1c: Waiting
+0b1f26057bd0: Waiting
+08000c18d16d: Waiting
+82140d9a70a7: Layer already exists
+79f369df2602: Layer already exists
+e4a2b85378be: Layer already exists
+c0edeb7bca42: Layer already exists
+96d9a18f8002: Layer already exists
+0b1f26057bd0: Layer already exists
+f3b40b0cdb1c: Layer already exists
+08000c18d16d: Layer already exists
+latest: digest: sha256:e1f1a8232b81b4233d30c4784c2748666f383783cb007275a19952a9f297e658 size: 1994
++ docker push mallikarjuningali/crud-dd-backend:33
+The push refers to repository [docker.io/mallikarjuningali/crud-dd-backend]
+96d9a18f8002: Preparing
+e4a2b85378be: Preparing
+79f369df2602: Preparing
+c0edeb7bca42: Preparing
+82140d9a70a7: Preparing
+f3b40b0cdb1c: Preparing
+0b1f26057bd0: Preparing
+08000c18d16d: Preparing
+f3b40b0cdb1c: Waiting
+0b1f26057bd0: Waiting
+08000c18d16d: Waiting
+82140d9a70a7: Layer already exists
+79f369df2602: Layer already exists
+96d9a18f8002: Layer already exists
+c0edeb7bca42: Layer already exists
+e4a2b85378be: Layer already exists
+08000c18d16d: Layer already exists
+0b1f26057bd0: Layer already exists
+f3b40b0cdb1c: Layer already exists
+33: digest: sha256:e1f1a8232b81b4233d30c4784c2748666f383783cb007275a19952a9f297e658 size: 1994
++ docker push mallikarjuningali/crud-dd-frontend:latest
+The push refers to repository [docker.io/mallikarjuningali/crud-dd-frontend]
+2e5c1cc91e79: Preparing
+f3651b2b20cc: Preparing
+63288c04b695: Preparing
+90ec27130398: Preparing
+a231a657395e: Preparing
+5f23a9cf34f1: Preparing
+7d9abb9ab3b7: Preparing
+34034c523565: Preparing
+570a1c87f279: Preparing
+412e147b334c: Preparing
+922ec217407c: Preparing
+5f23a9cf34f1: Waiting
+7d9abb9ab3b7: Waiting
+34034c523565: Waiting
+570a1c87f279: Waiting
+412e147b334c: Waiting
+922ec217407c: Waiting
+a231a657395e: Layer already exists
+90ec27130398: Layer already exists
+63288c04b695: Layer already exists
+5f23a9cf34f1: Layer already exists
+7d9abb9ab3b7: Layer already exists
+34034c523565: Layer already exists
+570a1c87f279: Layer already exists
+412e147b334c: Layer already exists
+922ec217407c: Layer already exists
+f3651b2b20cc: Pushed
+2e5c1cc91e79: Pushed
+latest: digest: sha256:b7a1beb811937f5b864c2c4cece477f1e751c8a6a157e18f2662f4c72c46950e size: 2613
++ docker push mallikarjuningali/crud-dd-frontend:33
+The push refers to repository [docker.io/mallikarjuningali/crud-dd-frontend]
+2e5c1cc91e79: Preparing
+f3651b2b20cc: Preparing
+63288c04b695: Preparing
+90ec27130398: Preparing
+a231a657395e: Preparing
+5f23a9cf34f1: Preparing
+7d9abb9ab3b7: Preparing
+34034c523565: Preparing
+570a1c87f279: Preparing
+412e147b334c: Preparing
+922ec217407c: Preparing
+5f23a9cf34f1: Waiting
+7d9abb9ab3b7: Waiting
+34034c523565: Waiting
+570a1c87f279: Waiting
+412e147b334c: Waiting
+922ec217407c: Waiting
+a231a657395e: Layer already exists
+2e5c1cc91e79: Layer already exists
+f3651b2b20cc: Layer already exists
+90ec27130398: Layer already exists
+63288c04b695: Layer already exists
+7d9abb9ab3b7: Layer already exists
+34034c523565: Layer already exists
+570a1c87f279: Layer already exists
+412e147b334c: Layer already exists
+5f23a9cf34f1: Layer already exists
+922ec217407c: Layer already exists
+33: digest: sha256:b7a1beb811937f5b864c2c4cece477f1e751c8a6a157e18f2662f4c72c46950e size: 2613
++ docker logout
+Removing login credentials for https://index.docker.io/v1/
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy to VM)
+[Pipeline] sshagent
+[ssh-agent] Using credentials ubuntu (SSH key for ubuntu@VM)
+$ ssh-agent
+SSH_AUTH_SOCK=/tmp/ssh-rCYQ9vSaQRSF/agent.33827
+SSH_AGENT_PID=33831
+Running ssh-add (command line suppressed)
+Identity added: /var/lib/jenkins/workspace/crud-deploy-pipeline@tmp/private_key_14322124906240778993.key (jenkins-to-vm)
+[ssh-agent] Started.
+[Pipeline] {
+[Pipeline] sh
++ VM_USER=ubuntu
++ VM_HOST=13.203.158.118
++ SSH_PORT=22
++ REMOTE_DIR=/home/ubuntu/crud-deploy
++ ssh -o StrictHostKeyChecking=no -p 22 ubuntu@13.203.158.118 
+                            mkdir -p /home/ubuntu/crud-deploy
+                        
++ scp -o StrictHostKeyChecking=no -P 22 docker-compose.yml ubuntu@13.203.158.118:/home/ubuntu/crud-deploy/
++ ssh -o StrictHostKeyChecking=no -p 22 ubuntu@13.203.158.118 
+                            cd /home/ubuntu/crud-deploy && docker compose pull && docker compose up -d
+                        
+time="2025-11-28T12:11:02Z" level=warning msg="/home/ubuntu/crud-deploy/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+ backend Pulling 
+ mongo Pulling 
+ frontend Pulling 
+ nginx Pulling 
+ nginx Pulled 
+ backend Pulled 
+ mongo Pulled 
+ 77b3c4c28c79 Pulling fs layer 
+ dd39178034ae Pulling fs layer 
+ dd39178034ae Download complete 
+ dd39178034ae Pull complete 
+ 77b3c4c28c79 Download complete 
+ 77b3c4c28c79 Pull complete 
+ frontend Pulled 
+time="2025-11-28T12:11:11Z" level=warning msg="/home/ubuntu/crud-deploy/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+ Network crud-deploy_default  Creating
+ Network crud-deploy_default  Created
+ Container crud_mongo  Creating
+ Container crud_mongo  Created
+ Container crud_backend  Creating
+ Container crud_backend  Created
+ Container crud_frontend  Creating
+ Container crud_frontend  Created
+ Container crud_nginx  Creating
+ Container crud_nginx  Created
+ Container crud_mongo  Starting
+ Container crud_mongo  Started
+ Container crud_backend  Starting
+ Container crud_backend  Started
+ Container crud_frontend  Starting
+ Container crud_frontend  Started
+ Container crud_nginx  Starting
+ Container crud_nginx  Started
+[Pipeline] }
+$ ssh-agent -k
+unset SSH_AUTH_SOCK;
+unset SSH_AGENT_PID;
+echo Agent pid 33831 killed;
+[ssh-agent] Stopped.
+[Pipeline] // sshagent
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] echo
+Pipeline executed successfully!
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
