@@ -1,7 +1,6 @@
 version: "3.8"
 
 services:
-
   mongo:
     image: mongo:6.0
     container_name: crud_mongo
@@ -13,18 +12,27 @@ services:
       - mongo-data:/data/db
 
   backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
     image: mallikarjuningali/crud-dd-backend:latest
     container_name: crud_backend
     depends_on:
       - mongo
     environment:
-      PORT: 8080
-      MONGO_URI: mongodb://mongoadmin:examplepassword@mongo:27017/cruddb?authSource=admin
+      - PORT=8080
+      - MONGO_URI=mongodb://mongoadmin:examplepassword@mongo:27017/cruddb?authSource=admin
+    ports:
+      - "8080:8080"
     restart: unless-stopped
 
   frontend:
-    image: mallikarjuningali/crud-dd-frontend:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
     container_name: crud_frontend
+    depends_on:
+      - backend
     restart: unless-stopped
 
   nginx:
