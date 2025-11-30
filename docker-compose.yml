@@ -22,6 +22,8 @@ services:
     environment:
       - PORT=8080
       - MONGO_URI=mongodb://mongoadmin:examplepassword@mongo:27017/cruddb?authSource=admin
+    ports:
+      - "8080:8080"
     restart: unless-stopped
 
   frontend:
@@ -48,3 +50,4 @@ services:
 
 volumes:
   mongo-data:
+
