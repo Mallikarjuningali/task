@@ -6,7 +6,7 @@ const db = {};
 db.mongoose = mongoose;
 
 // USE MONGO_URL FROM ENV
-db.url = process.env.MONGO_URL;
+db.url = process.env.MONGO_URI;
 
 if (!db.url) {
   console.error("❌ MONGO_URL is NOT set!");
