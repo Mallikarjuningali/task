@@ -30,7 +30,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.frontend
-    image: mallikarjuningali/crud-dd-frontend:latest
     container_name: crud_frontend
     depends_on:
       - backend
