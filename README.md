@@ -70,25 +70,3 @@ docker logs crud_nginx
 The application runs at:
 http://13.203.158.118/
 
-🌐 Nginx Reverse Proxy
-
-frontend/nginx.conf
-
-server {
-    listen 80;
-    server_name _;
-
-    location /api/ {
-        proxy_pass http://backend:8080/api/;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_http_version 1.1;
-        proxy_set_header Connection "";
-    }
-
-    location / {
-        proxy_pass http://frontend:80/;
-        try_files $uri $uri/ /index.html;
-    }
-}
