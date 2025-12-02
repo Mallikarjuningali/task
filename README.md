@@ -64,7 +64,6 @@ docker-compose up -d
 
 Step 4: View Logs
 docker logs crud_backend
-docker logs crud_frontend
 docker logs crud_nginx
 
 The application runs at:
