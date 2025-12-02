@@ -57,7 +57,7 @@ sudo apt install docker.io docker-compose -y
 
 Step 2: Clone Repo
 git clone https://github.com/Mallikarjuningali/task.git
-cd task
+cd crud-deploy
 
 Step 3: Start App
 docker-compose up -d
